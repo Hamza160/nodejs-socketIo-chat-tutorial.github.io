@@ -14,12 +14,19 @@ const io = socketIo(server);
 io.on('connection', (socket) => {
     console.log(`A New User Just Connected`);
 
+    socket.on('createMessage', (message) => {
+        console.log(message)
+    });
+
+    socket.emit('newMessage', {
+        from: "SDJ",
+        text: "All Well"
+    })
+
     socket.on('disconnect', () => {
         console.log(`User was disconnected`)
     })
 });
-
-
 
 server.listen(PORT, () => console.log(`Server is started on PORT:${PORT}`));
 
