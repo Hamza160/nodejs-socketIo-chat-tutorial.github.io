@@ -1,34 +1,29 @@
 const path = require('path');
-const express = require('express');
-const socketIo = require('socket.io');
 const http = require('http');
-const publicPath = path.join(__dirname, '/../public');
+const socketIo = require('socket.io');
+const express = require('express');
 const app = express();
-const PORT = process.env.PORT || 5000;
-app.use(express.static(publicPath));
 
+const publicPath = path.join(__dirname, '../public'); // Adjusted path
+
+const PORT = process.env.PORT || 5000;
+
+/* Creating Server For SocketIO */
 const server = http.createServer(app);
 const io = socketIo(server);
 
-/*Listening The Event => When Client Connect To Server*/
+// Listenig to a connection
 io.on('connection', (socket) => {
-    console.log(`A New User Just Connected`);
-
-    socket.on('createMessage', (message) => {
-        console.log(message)
-    });
-
-    socket.emit('newMessage', {
-        from: "SDJ",
-        text: "All Well"
-    })
+    console.log(`A New User Just Connected!`);
 
     socket.on('disconnect', () => {
-        console.log(`User was disconnected`)
-    })
+    console.log(`Client Disconnected`)
+})
+
 });
 
-server.listen(PORT, () => console.log(`Server is started on PORT:${PORT}`));
 
-// console.log(__dirname + "/../public");
-// console.log(path.join(__dirname, '/../public'));
+
+app.use(express.static(publicPath));
+
+server.listen(PORT, () => console.log(`Server is started on PORT: ${PORT}`));
