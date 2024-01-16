@@ -1,29 +1,38 @@
-const path = require('path');
 const http = require('http');
-const socketIo = require('socket.io');
+const path = require('path');
 const express = require('express');
+const socketIo = require('socket.io');
+
 const app = express();
-
-const publicPath = path.join(__dirname, '../public'); // Adjusted path
-
 const PORT = process.env.PORT || 5000;
+const publicPath = path.join(__dirname, '/../public');
 
-/* Creating Server For SocketIO */
+app.use(express.static(publicPath));
 const server = http.createServer(app);
+
 const io = socketIo(server);
 
-// Listenig to a connection
+// Socket For Single User;
+// IO For All Users For Broad Casting;
 io.on('connection', (socket) => {
-    console.log(`A New User Just Connected!`);
+    console.log(`A new user just joined`);
+
+    socket.on('createMessage', (message) => {
+        console.log(message);
+
+        // Broad Costing a Message For Everyon
+        io.emit('newMessage', {
+            from: message.from,
+            text: message.text,
+            createdAt: new Date().getTime()
+        })
+    })
+
 
     socket.on('disconnect', () => {
-    console.log(`Client Disconnected`)
-})
+        console.log(`User not connected`);
+    });
 
 });
 
-
-
-app.use(express.static(publicPath));
-
-server.listen(PORT, () => console.log(`Server is started on PORT: ${PORT}`));
+server.listen(PORT, () => console.log(`Server is started on PORT:${PORT} http://localhost:5000`));
