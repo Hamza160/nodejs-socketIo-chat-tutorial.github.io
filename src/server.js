@@ -17,11 +17,32 @@ const io = socketIo(server);
 io.on('connection', (socket) => {
     console.log(`A new user just joined`);
 
+      // From Admin
+    socket.emit('newMessage', {
+        from:'Admin',
+        text:'Welcome to the chat app',
+        createdAt: new Date().getTime()
+    })
+
+      // From Admin
+    socket.broadcast.emit('newMessage', {
+        from:'Admin',
+        text:'New User Joined',
+        createdAt: new Date().getTime()
+    })
+
     socket.on('createMessage', (message) => {
         console.log(message);
 
-        // Broad Costing a Message For Everyon
-        io.emit('newMessage', {
+        // Broad Costing a Message For Everyone
+        // io.emit('newMessage', {
+        //     from: message.from,
+        //     text: message.text,
+        //     createdAt: new Date().getTime()
+        // })
+
+        // Broadcast to a single socket
+        socket.broadcast.emit('newMessage',{
             from: message.from,
             text: message.text,
             createdAt: new Date().getTime()
