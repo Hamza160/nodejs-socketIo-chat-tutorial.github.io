@@ -4,9 +4,10 @@ const express = require('express');
 const socketIo = require('socket.io');
 
 const app = express();
+
 const PORT = process.env.PORT || 5000;
 const publicPath = path.join(__dirname, '/../public');
-
+const generateMessage = require('./utils/message')
 app.use(express.static(publicPath));
 const server = http.createServer(app);
 
@@ -18,20 +19,12 @@ io.on('connection', (socket) => {
     console.log(`A new user just joined`);
 
       // From Admin
-    socket.emit('newMessage', {
-        from:'Admin',
-        text:'Welcome to the chat app',
-        createdAt: new Date().getTime()
-    })
+    socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'))
 
       // From Admin
-    socket.broadcast.emit('newMessage', {
-        from:'Admin',
-        text:'New User Joined',
-        createdAt: new Date().getTime()
-    })
+    socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'))
 
-    socket.on('createMessage', (message) => {
+    socket.on('createMessage', (message, callback) => {
         console.log(message);
 
         // Broad Costing a Message For Everyone
@@ -42,11 +35,8 @@ io.on('connection', (socket) => {
         // })
 
         // Broadcast to a single socket
-        socket.broadcast.emit('newMessage',{
-            from: message.from,
-            text: message.text,
-            createdAt: new Date().getTime()
-        })
+        socket.broadcast.emit('newMessage', generateMessage(message.from, message.text))
+        callback(`This is the server`)
     })
 
 
