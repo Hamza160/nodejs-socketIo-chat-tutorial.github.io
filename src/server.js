@@ -40,6 +40,10 @@ io.on('connection', (socket) => {
     })
 
 
+    socket.on(`createLocationMessage`, (coords) => {
+      io.emit('newMessage', generateMessage(`Admin`, `${coords.lng}, ${coords.lat}`))
+    })
+
     socket.on('disconnect', () => {
         console.log(`User not connected`);
     });
