@@ -12,6 +12,18 @@ socket.on('newMessage', (message) => {
     document.querySelector('body').appendChild(li);
 })
 
+socket.on('newLocationMessage', (message) => {
+       console.log("LocationMessage", message);
+       const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.setAttribute('target', '_blank');
+    a.setAttribute('href', message.url);
+    a.innerHTML = `My Current Location`;
+    li.appendChild(a)
+    document.querySelector('body').appendChild(li);
+
+})
+
 socket.on('disconnect', () => {
     console.log(`Server not connected`);
 });

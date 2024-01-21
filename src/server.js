@@ -2,12 +2,12 @@ const http = require('http');
 const path = require('path');
 const express = require('express');
 const socketIo = require('socket.io');
+const { generateMessage, generateLocationMessage } = require('./utils/message');
 
 const app = express();
 
 const PORT = process.env.PORT || 5000;
 const publicPath = path.join(__dirname, '/../public');
-const generateMessage = require('./utils/message')
 app.use(express.static(publicPath));
 const server = http.createServer(app);
 
@@ -41,8 +41,8 @@ io.on('connection', (socket) => {
 
 
     socket.on(`createLocationMessage`, (coords) => {
-      io.emit('newMessage', generateMessage(`Admin`, `${coords.lng}, ${coords.lat}`))
-    })
+      io.emit('newLocationMessage', generateLocationMessage(`Admin`,  coords.lng, coords.lat));
+    });
 
     socket.on('disconnect', () => {
         console.log(`User not connected`);
